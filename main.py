@@ -51,9 +51,11 @@ def main():
         model = Model(FLAGS.model, device, dataloader, test_dataloader, 
                       FLAGS.channels, FLAGS.img_size, FLAGS.num_blocks)
         model.create_optim(FLAGS.lr)
+        if FLAGS.start_epoch != 0:
+            model.load_from(FLAGS.checkpoint_dir)
         
         # Train
-        model.train(FLAGS.epochs, FLAGS.log_interval, FLAGS.out_dir, True)
+        model.train(FLAGS.epochs, FLAGS.start_epoch, FLAGS.log_interval, FLAGS.out_dir, True)
         model.save_to()
     else:
         # Caution: test_dataloader may not be available in this scope. FIXME!
@@ -74,6 +76,8 @@ if __name__ == '__main__':
     parser.add_argument('--train', action='store_true', help='train mode')
     parser.add_argument('--eval', dest='train', action='store_false', help='eval mode')
     parser.set_defaults(train=True)
+    parser.add_argument('--start_epoch', type=int, default=0, help='Used for resume training.')
+    parser.add_argument('--checkpoint_dir', type=str, default='trained', help='Directory for last trained model checkpoint.')
     parser.add_argument('--data_dir', type=str, default='data', help='Directory for dataset.')
     parser.add_argument('--dataset', type=str, default='cyberpunk', help='Dataset name.')
     parser.add_argument('--out_dir', type=str, default='output', help='Directory for output.')

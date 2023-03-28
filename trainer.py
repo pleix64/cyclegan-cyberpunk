@@ -97,7 +97,8 @@ class Model(object):
                                           lr=lr, 
                                           betas=(alpha, beta))
             
-    def train(self, epochs, log_interval=100, out_dir='', verbose=True):
+    def train(self, epochs, start_epoch=0, 
+              log_interval=100, out_dir='', verbose=True):
         self.netG_AB.train()
         self.netG_BA.train()
         self.netD_A.train()
@@ -111,7 +112,7 @@ class Model(object):
         image_buffer_A = utils.ImageBuffer()
         image_buffer_B = utils.ImageBuffer()
         total_time = time.time()
-        for epoch in range(epochs):
+        for epoch in range(start_epoch, epochs):
             batch_time = time.time()
             for batch_idx, data in enumerate(self.data_loader):
                 real_A = data['trainA'].to(self.device)
