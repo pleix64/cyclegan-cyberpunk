@@ -14,13 +14,11 @@ class ResidualBlock(nn.Module):
         
         self.block = nn.Sequential(nn.ReflectionPad2d(1),
                                    nn.Conv2d(channels, channels, 3),
-                                   #nn.InstanceNorm2d(channels),
-                                   nn.BatchNorm2d(channels),
+                                   nn.InstanceNorm2d(channels),
                                    nn.ReLU(inplace=True),
                                    nn.ReflectionPad2d(1),
                                    nn.Conv2d(channels, channels, 3),
-                                   #nn.InstanceNorm2d(channels))
-                                   nn.BatchNorm2d(channels))
+                                   nn.InstanceNorm2d(channels))
     def forward(self, x):
         return x + self.block(x)
     
@@ -58,8 +56,7 @@ class Generator(nn.Module):
         else:
             layers.append(nn.Conv2d(size_in, size_out, kernel_size,
                                     stride=stride, padding=padding))
-        #layers.append(nn.InstanceNorm2d(size_out))
-        layers.append(nn.BatchNorm2d(size_out))
+        layers.append(nn.InstanceNorm2d(size_out))
         layers.append(nn.ReLU(inplace=True))
         return layers
     
@@ -83,8 +80,7 @@ class Discriminator(nn.Module):
     def _create_layer(self, size_in, size_out, stride, normalize=True):
         layers = [nn.Conv2d(size_in, size_out, 4, stride=stride, padding=1)]
         if normalize:
-            #layers.append(nn.InstanceNorm2d(size_out))
-            layers.append(nn.BatchNorm2d(size_out))
+            layers.append(nn.InstanceNorm2d(size_out))
         layers.append(nn.LeakyReLU(0.2, inplace=True))
         return layers
    

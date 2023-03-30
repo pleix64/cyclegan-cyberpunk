@@ -23,12 +23,6 @@ def _weight_init(m):
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
         nn.init.normal_(m.weight.data, 0.0, 0.02)
-    #FIXME: InstanceNorm is recommended for cyclegan, 
-    # but it seems not working for data.weight initialization
-    # Does BatchNorm with batch_size=1 works as the same as 
-    # using InstanceNorm? 
-    # also look up what the model initialized by default
-    #elif classname.find('InstanceNorm') != -1:
     elif classname.find('BatchNorm') != -1:
         nn.init.normal_(m.weight.data, 1.0, 0.02)
         nn.init.constant_(m.bias.data, 0.0)
