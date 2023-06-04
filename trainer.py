@@ -184,7 +184,7 @@ class Model(object):
             print('Total train time: {:.2f}'.format(
                 time.time() - total_time))
                 
-    def eval(self, batch_size=None):
+    def eval(self, batch_size=None, out_dir=''):
         self.netG_AB.eval()
         self.netG_BA.eval()
         self.netD_A.eval()
@@ -194,14 +194,13 @@ class Model(object):
                 
         with torch.no_grad():
             for batch_idx, data in enumerate(self.test_data_loader):
-                _real_A = data['testA'].to(self.device)
-                _fake_B = self.netG_AB(_real_A)
+                #_real_A = data['testA'].to(self.device)
+                #_fake_B = self.netG_AB(_real_A)
                 _real_B = data['testB'].to(self.device)
                 _fake_A = self.netG_BA(_real_B)
-                viz_sample = torch.cat((_real_A, _fake_B, 
-                                        _real_B, _fake_A), 0)
+                viz_sample = torch.cat((_real_B, _fake_A), 0)
                 vutils.save_image(viz_sample, 
-                                  'img_{}.png'.format(batch_idx),
+                                  os.path.join(out_dir, 'img_{}.png'.format(batch_idx)),
                                   nrow=batch_size,
                                   normalize=True)
                     

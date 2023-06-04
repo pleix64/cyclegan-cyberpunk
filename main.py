@@ -58,13 +58,22 @@ def main():
         model.train(FLAGS.epochs, FLAGS.start_epoch, FLAGS.log_interval, FLAGS.out_dir, True)
         model.save_to()
     else:
-        # Caution: test_dataloader may not be available in this scope. FIXME!
-        # test first!
+        transform = [transforms.Resize(int(FLAGS.img_size * 1.12), 
+                                       transforms.InterpolationMode.BICUBIC),
+                     transforms.RandomCrop((FLAGS.img_size, FLAGS.img_size)),
+                     transforms.ToTensor(),
+                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+
+        test_data = ImageDataset(os.path.join(FLAGS.data_dir, FLAGS.dataset),
+                                 transform=transform, 
+                                 unaligned=True,
+                                 mode='test')
+        test_dataloader = DataLoader(test_data, batch_size=FLAGS.test_batch_size, 
+                                     shuffle=False, num_workers=2)
         model = Model(FLAGS.model, device, None, test_dataloader, 
                       FLAGS.channels, FLAGS.img_size, FLAGS.num_blocks)
         model.load_from(FLAGS.out_dir)
-        # eval func seems not defined in this way. test first! FIXME!
-        model.eval(model=1, batch_size=FLAGS.batch_size)
+        model.eval(out_dir=FLAGS.out_dir)
     
     
 if __name__ == '__main__':
